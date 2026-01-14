@@ -1,0 +1,17 @@
+name: prod deploy
+
+on:
+  push:
+    tags:
+      - v*
+    paths:
+      - 'server/**'
+
+jobs:
+  general-deploy-pipeline:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      image_name: ${{ github.repository }}
+      make_command: deploy-go-exporter
+      devops_repository: meteo-station/devops
+    secrets: inherit

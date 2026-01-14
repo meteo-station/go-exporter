@@ -1,0 +1,16 @@
+name: dev deploy
+
+on:
+  push:
+    branches:
+    - release/*
+    - hotfix/*
+
+jobs:
+  general-deploy-pipeline:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      image_name: ${{ github.repository }}-dev
+      make_command: deploy-go-exporter-dev
+      devops_repository: meteo-station/devops
+    secrets: inherit
