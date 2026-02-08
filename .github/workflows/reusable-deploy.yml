@@ -64,37 +64,37 @@ jobs:
             BUILD=${{ github.run_id }}
             BUILD_DATE=${{ env.BUILD_DATE }}
 
-  # Деплой через Ansible
-  ansible-deploy:
-    needs: docker-build-and-push
-    runs-on: ubuntu-latest
-    container:
-      image: willhallonline/ansible:latest
-    steps:
-      # Переключаемся в devops репозиторий
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ inputs.devops_repository }}
-          token: '${{ secrets.PAT_TOKEN }}'
-
-        # Настраиваем ssh
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa_github
-          chmod 600 ~/.ssh/id_rsa_github
-
-      - name: Install Make
-        run: |
-          apk update && apk add make
-
-      # Создаем файл с паролем для Ansible Vault
-      - name: Make file with vault password
-        run: |
-          VAULT_PASSWORD=${{ secrets.VAULT_PASSWORD }} make add-ansible-vault-password
-
-
-        # Устанавливаем переменные окружения
-      - name: Run Ansible playbook
-        run: |
-          ANSIBLE_HOST_KEY_CHECKING=False make ${{ inputs.make_command }}
+#  # Деплой через Ansible
+#  ansible-deploy:
+#    needs: docker-build-and-push
+#    runs-on: ubuntu-latest
+#    container:
+#      image: willhallonline/ansible:latest
+#    steps:
+#      # Переключаемся в devops репозиторий
+#      - uses: actions/checkout@v4
+#        with:
+#          repository: ${{ inputs.devops_repository }}
+#          token: '${{ secrets.PAT_TOKEN }}'
+#
+#        # Настраиваем ssh
+#      - name: Setup SSH
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa_github
+#          chmod 600 ~/.ssh/id_rsa_github
+#
+#      - name: Install Make
+#        run: |
+#          apk update && apk add make
+#
+#      # Создаем файл с паролем для Ansible Vault
+#      - name: Make file with vault password
+#        run: |
+#          VAULT_PASSWORD=${{ secrets.VAULT_PASSWORD }} make add-ansible-vault-password
+#
+#
+#        # Устанавливаем переменные окружения
+#      - name: Run Ansible playbook
+#        run: |
+#          ANSIBLE_HOST_KEY_CHECKING=False make ${{ inputs.make_command }}

@@ -8,7 +8,7 @@ RUN apt install ca-certificates
 ADD . /go-server
 WORKDIR /go-server/server
 RUN sed -i -e "s|@{build}|${BUILD}|g" -e "s|@{version}|${VERSION}|g" -e "s|@{buildDate}|${BUILD_DATE}|g" internal/main.go
-RUN go build -o ../main internal/main.go
+RUN env GOOS=linux GOARCH=arm64 go build -o ../main internal/main.go
 
 FROM ubuntu:latest
 WORKDIR /go-server
