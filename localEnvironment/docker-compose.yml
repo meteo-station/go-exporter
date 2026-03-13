@@ -13,4 +13,27 @@ services:
     volumes:
       - ./pgsql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "6134:5432"
+      - "6135:5432"
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    restart: always
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - "1883:1883"
+
+  homebridge:
+    image: homebridge/homebridge:latest
+    restart: always
+    volumes:
+      - homebridge_data:/homebridge
+    ports:
+      - "8581:8581"
+      - "51828:51828"
+    environment:
+      - TZ=Europe/Moscow
+      - ENABLE_AVAHI=0
+
+volumes:
+  homebridge_data:

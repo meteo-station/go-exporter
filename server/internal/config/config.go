@@ -31,6 +31,12 @@ type Config struct {
 	Logger log.LoggerSettingsEnv
 
 	StackTraceEnabled bool `env:"STACK_TRACE_ENABLED"`
+
+	Homebridge HomebridgeConfig
+}
+
+type HomebridgeConfig struct {
+	WebhookURL string `env:"HOMEBRIDGE_WEBHOOK_URL"`
 }
 
 func Load() Config {

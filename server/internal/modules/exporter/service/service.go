@@ -6,6 +6,7 @@ import (
 
 	"go.opentelemetry.io/otel"
 
+	"server/internal/config"
 	exporterModel "server/internal/modules/exporter/model"
 	exporterRepository "server/internal/modules/exporter/repository"
 )
@@ -16,6 +17,7 @@ var _ ExporterRepository = new(exporterRepository.ExporterRepository)
 
 type ExporterRepository interface {
 	CreateMeteoData(context.Context, []exporterModel.CreateMeteoDataReq) error
+	GetHomebridgeAccessoryMappings(context.Context) ([]exporterModel.HomebridgeAccessoryMapping, error)
 }
 
 type ArrgCacheValue struct {
@@ -26,14 +28,17 @@ type ArrgCacheValue struct {
 type ExporterService struct {
 	exporterRepository ExporterRepository
 	arrgCache          *cache.ItemCache[string, ArrgCacheValue]
+	homebridgeConf     config.HomebridgeConfig
 }
 
 func NewExporterService(
 	exporterRepository ExporterRepository,
+	homebridgeConf config.HomebridgeConfig,
 ) *ExporterService {
 	s := &ExporterService{
 		exporterRepository: exporterRepository,
 		arrgCache:          cache.NewItemCache[string, ArrgCacheValue](),
+		homebridgeConf:     homebridgeConf,
 	}
 
 	go s.flush()

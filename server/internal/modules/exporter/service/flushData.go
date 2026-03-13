@@ -13,7 +13,7 @@ func (s *ExporterService) flush() {
 	for {
 		time.Sleep(time.Minute)
 		if err := s._flush(); err != nil {
-			log.Error(err)
+			log.LogError(err)
 		}
 	}
 }
@@ -23,7 +23,7 @@ func (s *ExporterService) _flush() error {
 	// Получаем все значения из кэша
 	aggrTable := s.arrgCache.PopAll()
 	if len(aggrTable) == 0 {
-		return errors.NotFound.New("items not found")
+		return errors.NotFound.New("items not found").WithLogOption(errors.LogAsWarning)
 	}
 
 	var reqs []model.CreateMeteoDataReq
@@ -49,5 +49,15 @@ func (s *ExporterService) _flush() error {
 		})
 	}
 
-	return s.exporterRepository.CreateMeteoData(context.Background(), reqs)
+	// Сохраняем в БД
+	if err := s.exporterRepository.CreateMeteoData(context.Background(), reqs); err != nil {
+		return err
+	}
+
+	// Отправляем данные в Homebridge
+	if err := s.sendDataToHomebridge(context.Background(), reqs); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,0 +1,1 @@
+GET {{webhook_host}}/?accessoryId=1&value=22.5

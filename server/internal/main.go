@@ -127,7 +127,7 @@ func run() error {
 	exporterRepository := exporterRepository.NewExporterRepository(pgsql)
 
 	// Регистрируем сервисы
-	exporterService := exporterService.NewExporterService(exporterRepository)
+	exporterService := exporterService.NewExporterService(exporterRepository, conf.Homebridge)
 
 	// Регистрируем эндпоинты
 	exporterEndpoint.MountExchangeEndpoint(mosquitto, exporterService)
