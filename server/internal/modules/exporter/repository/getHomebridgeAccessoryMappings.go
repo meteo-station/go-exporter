@@ -18,6 +18,7 @@ func (r *ExporterRepository) GetHomebridgeAccessoryMappings(ctx context.Context)
 			homebridgeAccessoryMappingDDL.ColumnDeviceID,
 			homebridgeAccessoryMappingDDL.ColumnMetricType,
 			homebridgeAccessoryMappingDDL.ColumnAccessoryUniqueID,
+			homebridgeAccessoryMappingDDL.ColumnValueMapper,
 		).
 		From(homebridgeAccessoryMappingDDL.Table)
 

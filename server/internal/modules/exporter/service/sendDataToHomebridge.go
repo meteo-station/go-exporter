@@ -25,19 +25,20 @@ func (s *ExporterService) sendDataToHomebridge(ctx context.Context, data []expor
 		return nil
 	}
 
-	// Строим индекс: "deviceID-metricType" -> accessoryID
-	mappingIndex := make(map[string]string, len(mappings))
+	// Строим индекс: "deviceID-metricType" -> mapping
+	mappingIndex := make(map[string]exporterModel.HomebridgeAccessoryMapping, len(mappings))
 	for _, m := range mappings {
-		mappingIndex[m.DeviceID+"-"+m.MetricType] = m.AccessoryUniqueID
+		mappingIndex[m.DeviceID+"-"+m.MetricType] = m
 	}
 
 	for _, item := range data {
-		accessoryID, ok := mappingIndex[item.DeviceID+"-"+item.MetricType]
+		mapping, ok := mappingIndex[item.DeviceID+"-"+item.MetricType]
 		if !ok {
 			continue
 		}
-		if err := sendWebhook(ctx, s.homebridgeConf.WebhookURL, accessoryID, item.Value); err != nil {
-			return fmt.Errorf("webhook accessory %s: %w", accessoryID, err)
+		value := applyValueMapper(mapping.ValueMapper, item.Value)
+		if err := sendWebhook(ctx, s.homebridgeConf.WebhookURL, mapping.AccessoryUniqueID, value); err != nil {
+			return fmt.Errorf("webhook accessory %s: %w", mapping.AccessoryUniqueID, err)
 		}
 	}
 

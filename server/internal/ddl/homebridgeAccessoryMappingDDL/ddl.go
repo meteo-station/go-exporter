@@ -13,6 +13,7 @@ const (
 	ColumnDeviceID          = "device_id"
 	ColumnMetricType        = "metric_type"
 	ColumnAccessoryUniqueID = "accessory_unique_id"
+	ColumnValueMapper       = "value_mapper"
 )
 
 func WithPrefix(column string) string {
